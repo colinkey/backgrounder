@@ -25,14 +25,32 @@ function handleRedditData(response) {
   });
 
   response.on("end", () => {
+    if (response.statusCode !== 200) {
+      console.log("The request was not successful");
+      console.log(`Status code ${response.statusCode}`);
+      process.exit(0);
+    }
+
     const responseData = JSON.parse(Buffer.concat(chunks));
     console.log(`Found top post with title: ${responseData.data.children[0].data.title}`);
+
+    if (
+      responseData.data.children[0].data.is_self ||
+      responseData.data.children[0].data.isVideo ||
+      responseData.data.children[0].data.thumbnail === ""
+    ) {
+      console.log(
+        "Hmmm.. this doesn't look like an image post. Exiting. IF you think this is an error, file an issue on GitHub with the subreddit and post title"
+      );
+      process.exit(0);
+    }
+
     const bgUrl = responseData.data.children[0].data.url;
     if (!bgUrl) {
       console.log("No url found for top post in " + subreddit);
       process.exit(0);
     }
-    console.log(bgUrl);
+
     handleImageSave(bgUrl);
   });
 
@@ -54,6 +72,9 @@ function handleImageSave(url) {
 
     res.on("end", async () => {
       console.log("Setting wallpaper...");
+      if (!fs.existsSync("./images")) {
+        fs.mkdirSync("./images");
+      }
       await fs.writeFileSync(`images/${filename}.png`, chunks.read());
       await wallpaper.set(`images/${filename}.png`);
       console.log("Done!");
