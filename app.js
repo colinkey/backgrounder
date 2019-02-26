@@ -12,7 +12,7 @@ function setOptions() {
   }
   return (options = {
     hostname: "www.reddit.com",
-    path: `/r/${subreddit}/top.json?limit=1&t=hour`,
+    path: `/r/${subreddit}/top.json?limit=1`,
     method: "GET",
     agent: false
   });
