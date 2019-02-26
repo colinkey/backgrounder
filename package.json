@@ -1,0 +1,14 @@
+{
+  "name": "backgrounder",
+  "version": "1.0.0",
+  "description": "Grab the top post from a specific subreddit and set it as a desktop background",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Colin Key",
+  "license": "ISC",
+  "dependencies": {
+    "wallpaper": "^4.2.0"
+  }
+}
