@@ -1,62 +1,73 @@
 const express = require("express");
+const next = require("next");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const db = require("./lib/db");
-
 require("./lib/cron");
 
-const app = express();
-const port = 1776;
+const PORT = process.env.PORT || 1776;
+const dev = process.env.NODE_ENV !== "production";
 
-app.use(bodyParser.json());
-app.use(cors());
+const backgrounder = next({ dev, dir: "./frontend" });
+const nextHandler = backgrounder.getRequestHandler();
 
-app.get("/", async (req, res, next) => {
-  const subreddits = db.get("subreddits").value();
-  const imagesFromDb = db.get("images").value();
+backgrounder.prepare().then(() => {
+  const app = express();
 
-  const images = [...imagesFromDb].sort((a, b) => a.date < b.date);
+  app.use(bodyParser.json());
+  app.use(cors());
 
-  res.send({ subreddits, images });
+  app.get("/api/", async (req, res, next) => {
+    const subreddits = db.get("subreddits").value();
+    const imagesFromDb = db.get("images").value();
+
+    const images = [...imagesFromDb].sort((a, b) => a.date < b.date);
+
+    res.send({ subreddits, images });
+  });
+
+  app.post("/api/subreddits/new", async (req, res, next) => {
+    const { subreddit } = req.body;
+
+    if (!subreddit) return res.send("nope...");
+
+    const existingSubreddits = db.get("subreddits").value();
+
+    if (existingSubreddits.includes(subreddit)) {
+      return res.sendStatus(304);
+    }
+
+    const newSubreddits = db
+      .get("subreddits")
+      .push(subreddit)
+      .write();
+
+    res.send(newSubreddits);
+  });
+
+  app.delete("/api/subreddits/delete", async (req, res, next) => {
+    const { subreddit } = req.body;
+
+    if (!subreddit) return res.send("nope...");
+
+    const newSubreddits = db
+      .get("subreddits")
+      .pull(subreddit)
+      .write();
+
+    res.send(newSubreddits);
+  });
+
+  app.delete("/api/image/:name", () => {
+    const { name: imageName } = req.params;
+
+    // remove the post somehow
+  });
+
+  app.get("*", (req, res) => {
+    return nextHandler(req, res);
+  });
+
+  app.listen(PORT, () => console.log(`Now listening on http://localhost:${PORT}`));
 });
-
-app.post("/subreddits/new", async (req, res, next) => {
-  const { subreddit } = req.body;
-
-  if (!subreddit) return res.send("nope...");
-
-  const existingSubreddits = db.get("subreddits").value();
-
-  if (existingSubreddits.includes(subreddit)) {
-    return res.sendStatus(304);
-  }
-
-  const newSubreddits = db
-    .get("subreddits")
-    .push(subreddit)
-    .write();
-
-  res.send(newSubreddits);
-});
-
-app.delete("/subreddits/delete", async (req, res, next) => {
-  const { subreddit } = req.body;
-
-  if (!subreddit) return res.send("nope...");
-
-  const newSubreddits = db
-    .get("subreddits")
-    .pull(subreddit)
-    .write();
-
-  res.send(newSubreddits);
-});
-
-app.delete("/image/:name", () => {
-  const { name: imageName } = req.params;
-
-  // remove the post somehow
-});
-
-app.listen(port, () => console.log(`Now listening on http://localhost:${port}`));

@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"next ./frontend\" \"./node_modules/.bin/nodemon -r ./backend/app.js --ignore '*.json'\"",
+    "dev": "node ./backend/app.js",
     "build": "next build ./frontend",
-    "start": "ENV=production concurrently \"next start ./frontend\" \"node ./backend/app.js\""
+    "start": "NODE_ENV=production node ./backend/app.js"
   },
   "keywords": [],
   "author": "",
@@ -21,10 +21,6 @@
     "express": "^4.16.4",
     "lowdb": "^1.0.0",
     "node-cron": "^2.0.3",
-    "node-fetch": "^2.3.0",
-    "concurrently": "^4.1.0"
-  },
-  "devDependencies": {
-    "nodemon": "^1.18.10"
+    "node-fetch": "^2.3.0"
   }
 }
