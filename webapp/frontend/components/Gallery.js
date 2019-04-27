@@ -1,7 +1,9 @@
+import React from "react";
+
 export function Gallery(props) {
   return (
     <div className="gallery">
-      {props.children}
+      {React.Children.map(props.children, child => React.cloneElement(child, { page: props.url }))}
       <style jsx>{`
         .gallery {
           display: flex;

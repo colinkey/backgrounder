@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node ./backend/app.js",
+    "dev": "npx nodemon ./backend/app.js --watch ./backend/app.js",
     "build": "next build ./frontend",
     "start": "NODE_ENV=production pm2 start ./backend/app.js"
   },

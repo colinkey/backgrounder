@@ -1,13 +1,26 @@
+import Router from "next/router";
+
 import { Image } from "./Image";
 
+import { deleteFetch } from "../util";
+
 export function Card(props) {
+  const { pathname, query } = props.page;
+
+  const handleDelete = () => {
+    deleteFetch(`/image/${props.name}`);
+    Router.push(query.offset ? `/?offset=${query.offset}` : pathname);
+  };
+
   return (
     <div className="card">
       <Image src={props.url} alt={props.title} />
       <div className="card-details">
         <h3 className="card-title">{props.title}</h3>
         <p className="card-subreddit">{props.subreddit}</p>
-        <button className="nah">🚫 Nah</button>
+        <button className="nah" onClick={handleDelete}>
+          🚫 Nah
+        </button>
       </div>
       <style jsx>{`
         h3,

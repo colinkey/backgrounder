@@ -61,10 +61,14 @@ backgrounder.prepare().then(() => {
     res.send(newSubreddits);
   });
 
-  app.delete("/api/image/:name", () => {
-    const { name: imageName } = req.params;
+  app.delete("/api/image/:name", async (req, res, next) => {
+    const { name } = req.params;
 
-    // remove the post somehow
+    db.get("images")
+      .remove({ name })
+      .write();
+
+    res.status(200).send({ status: "success" });
   });
 
   app.get("*", (req, res) => {
