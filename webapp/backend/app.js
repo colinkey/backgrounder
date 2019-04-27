@@ -18,13 +18,15 @@ backgrounder.prepare().then(() => {
   app.use(bodyParser.json());
   app.use(cors());
 
-  app.get("/api/", async (req, res, next) => {
-    const subreddits = db.get("subreddits").value();
+  app.get("/api/images/:offset", async (req, res, next) => {
+    const { offset = 0 } = req.params;
     const imagesFromDb = db.get("images").value();
 
-    const images = [...imagesFromDb].sort((a, b) => a.date < b.date);
+    const images = [...imagesFromDb]
+      .sort((a, b) => a.date < b.date)
+      .slice(Number(offset), Number(offset) + 20);
 
-    res.send({ subreddits, images });
+    res.send(images);
   });
 
   app.post("/api/subreddits/new", async (req, res, next) => {

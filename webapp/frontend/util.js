@@ -6,7 +6,7 @@ const HOST = {
 }[process.env.NODE_ENV];
 
 export async function getFetch(url = HOST) {
-  const response = await fetch(url);
+  const response = await fetch(`${HOST}${url}`);
   const responseData = await response.json();
   return responseData;
 }
