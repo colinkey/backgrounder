@@ -4,3 +4,4 @@
 
 /webapp/frontend/.next
 /webapp/backend/db.json
+/webapp/.config.js

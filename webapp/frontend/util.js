@@ -1,8 +1,10 @@
 import fetch from "isomorphic-unfetch";
 
+import config from "../.config.js";
+
 const HOST = {
   development: "http://localhost:1776/api",
-  production: "http://:1776/api"
+  production: `http://${config.production || ""}:1776/api`
 }[process.env.NODE_ENV];
 
 export async function getFetch(url = HOST) {
