@@ -3,7 +3,7 @@ const cron = require("node-cron");
 const { fetchAllRedditData } = require("./fetchBackground");
 const db = require("./db");
 
-cron.schedule("10/10 * * * *", async () => {
+cron.schedule("10 * * * *", async () => {
   const subreddits = db.get("subreddits").value();
 
   const redditData = await fetchAllRedditData(subreddits);
