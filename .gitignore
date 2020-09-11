@@ -1,2 +1,7 @@
-/node_modules
-/images/*
+*/node_modules
+
+/cli/images/*
+
+/webapp/frontend/.next
+/webapp/backend/db.json
+/webapp/.config.js
